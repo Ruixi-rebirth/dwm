@@ -1,7 +1,3 @@
-config.h
-autostart.sh
-statusbar/
-
 result
 dwm
 *.o
