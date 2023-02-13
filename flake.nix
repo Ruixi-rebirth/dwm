@@ -16,7 +16,15 @@
         final: prev: {
           dwm = prev.dwm.overrideAttrs (oldAttrs: rec {
             postPatch = (oldAttrs.postPatch or "") + ''
-              cp -r DEF/* .
+              if [[ ! -d "statusbar" ]]; then 
+                cp -r DEF/statusbar .
+              fi
+              if [[ ! -f "config.h" ]]; then 
+                cp DEF/config.h . 
+              fi
+              if [[ ! -f "autostart.sh" ]]; then 
+                  cp DEF/autostart.sh . 
+              fi
             '';
             version = "master";
             src = ./.;
