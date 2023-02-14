@@ -41,8 +41,8 @@
               self.overlays.default
             ];
           };
-          autostart-name = "dwm-autostart";
           my-buildInputs = with pkgs; [ ];
+          autostart-name = "dwm-autostart";
           autostart-script = (pkgs.writeScriptBin autostart-name (builtins.readFile ./autostart.sh)).overrideAttrs (old: {
 
             buildCommand = "${old.buildCommand}\n patchShebangs $out";
@@ -59,7 +59,7 @@
 
         in
         rec {
-          packages.default = pkgs.dwm;
+          defaultPackage = packages.statusbar-script;
           packages = {
             dwm = pkgs.dwm;
             autostart-script = pkgs.symlinkJoin {
@@ -72,7 +72,7 @@
               name = statusbar-name;
               paths = [ statusbar-script ] ++ my-buildInputs;
               buildInputs = [ pkgs.makeWrapper ];
-              postBuild = "wrapProgram $out/bin/${autostart-name} --prefix PATH : $out/bin";
+              postBuild = "wrapProgram $out/bin/${statusbar-name} --prefix PATH : $out/bin";
             };
 
           };
