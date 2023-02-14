@@ -41,10 +41,41 @@
               self.overlays.default
             ];
           };
+          autostart-name = "dwm-autostart";
+          my-buildInputs = with pkgs; [ ];
+          autostart-script = (pkgs.writeScriptBin autostart-name (builtins.readFile ./autostart.sh)).overrideAttrs (old: {
+
+            buildCommand = "${old.buildCommand}\n patchShebangs $out";
+
+          });
+          statusbar-name = "dwm-statusbar";
+          statusbar-script = (pkgs.writeScriptBin statusbar-name (builtins.readFile ./statusbar/statusbar.sh)).overrideAttrs (old: {
+
+            buildCommand = "${old.buildCommand}\n patchShebangs $out";
+
+          });
+
+
+
         in
         rec {
-          packages.dwm = pkgs.dwm;
           packages.default = pkgs.dwm;
+          packages = {
+            dwm = pkgs.dwm;
+            autostart-script = pkgs.symlinkJoin {
+              name = autostart-name;
+              paths = [ autostart-script ] ++ my-buildInputs;
+              buildInputs = [ pkgs.makeWrapper ];
+              postBuild = "wrapProgram $out/bin/${autostart-name} --prefix PATH : $out/bin";
+            };
+            statusbar-script = pkgs.symlinkJoin {
+              name = statusbar-name;
+              paths = [ statusbar-script ] ++ my-buildInputs;
+              buildInputs = [ pkgs.makeWrapper ];
+              postBuild = "wrapProgram $out/bin/${autostart-name} --prefix PATH : $out/bin";
+            };
+
+          };
           devShells.default = pkgs.mkShell {
             buildInputs = with pkgs; [ xorg.libX11 xorg.libXft xorg.libXinerama gcc ];
           };
